@@ -1,170 +1,557 @@
-const library = document.getElementById('library');
-const reader = document.getElementById('reader');
-const bookCards = [...document.querySelectorAll('.book-card')];
-const backBtn = document.getElementById('backBtn');
-const searchBtn = document.getElementById('searchBtn');
-const searchPanel = document.getElementById('searchPanel');
-const searchInput = document.getElementById('searchInput');
-const searchCount = document.getElementById('searchCount');
-const chat = document.getElementById('chat');
-const progressBar = document.getElementById('progressBar');
-const topBtn = document.getElementById('topBtn');
-const readerTitle = document.getElementById('readerTitle');
-const readerSubtitle = document.getElementById('readerSubtitle');
+const library = document.getElementById("library");
+const reader = document.getElementById("reader");
 
-let sourceText = '';
-let messageData = [];
-const cache = new Map();
+const bookCards = document.querySelectorAll(".book-card");
 
-function showScreen(name) {
-  library.classList.toggle('active', name === 'library');
-  reader.classList.toggle('active', name === 'reader');
-  window.scrollTo(0, 0);
+const backBtn = document.getElementById("backBtn");
+const searchBtn = document.getElementById("searchBtn");
+const searchPanel = document.getElementById("searchPanel");
+const searchInput = document.getElementById("searchInput");
+const searchCount = document.getElementById("searchCount");
+
+const chat = document.getElementById("chat");
+const progressBar = document.getElementById("progressBar");
+const topBtn = document.getElementById("topBtn");
+
+const readerTitle = document.getElementById("readerTitle");
+const readerSubtitle = document.getElementById("readerSubtitle");
+
+let currentMessages = [];
+
+
+/* =========================
+   画面切り替え
+========================= */
+
+function showLibrary() {
+  library.classList.add("active");
+  reader.classList.remove("active");
+
+  window.scrollTo({
+    top: 0,
+    behavior: "instant"
+  });
 }
 
-function normalize(text) {
-  return text.replace(/\r\n/g, '\n').replace(/\\\*\\\*/g, '**');
+
+function showReader() {
+  library.classList.remove("active");
+  reader.classList.add("active");
+
+  window.scrollTo({
+    top: 0,
+    behavior: "instant"
+  });
 }
 
-function isLikelyUserLine(line) {
-  const t = line.trim();
-  if (!t) return false;
-  if (/^(次|つぎ|お願い|お願いします|続き|続きを)$/u.test(t)) return true;
-  if (/^(第.+?(解説して|解説してほしい|も.+?解説して|を.+?解説して)|.+?を解説して)$/u.test(t)) return true;
-  if (/^(この.+?(形式|形).+?(解説|説明)|同じ.+?(形式|形).+?(解説|説明))/u.test(t)) return true;
+
+/* =========================
+   HTMLの安全化
+========================= */
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+/* =========================
+   Markdown表示
+========================= */
+
+function markdownToHtml(text) {
+
+  // marked が読み込めている場合
+  if (typeof marked !== "undefined") {
+
+    try {
+
+      return marked.parse(text, {
+        breaks: true,
+        gfm: true
+      });
+
+    } catch (error) {
+
+      console.error("Markdown変換エラー", error);
+
+    }
+
+  }
+
+
+  // marked が使えない場合でも本文を表示
+  return escapeHtml(text).replace(/\n/g, "<br>");
+
+}
+
+
+/* =========================
+   ユーザー発言か判定
+========================= */
+
+function isUserMessage(text) {
+
+  const t = text.trim();
+
+  if (!t) {
+    return false;
+  }
+
+
+  // 「次」「つぎ」
+  if (
+    t === "次" ||
+    t === "つぎ" ||
+    t === "お願い" ||
+    t === "お願いします" ||
+    t === "続き" ||
+    t === "続きを"
+  ) {
+    return true;
+  }
+
+
+  // 「○○を解説して」
+  if (
+    t.endsWith("解説して") ||
+    t.endsWith("説明して")
+  ) {
+    return true;
+  }
+
+
   return false;
 }
 
-function parseConversation(text) {
-  const lines = normalize(text).split('\n');
-  const parts = [];
-  let current = [];
 
-  const flushAssistant = () => {
-    const content = current.join('\n').trim();
-    if (content) parts.push({ role: 'assistant', content });
-    current = [];
-  };
+/* =========================
+   チャット内容を分割
+========================= */
+
+function parseConversation(text) {
+
+  const lines = text
+    .replace(/\r\n/g, "\n")
+    .split("\n");
+
+
+  const messages = [];
+
+  let assistantLines = [];
+
+
+  function flushAssistant() {
+
+    const content = assistantLines
+      .join("\n")
+      .trim();
+
+
+    if (content) {
+
+      messages.push({
+        role: "assistant",
+        content: content
+      });
+
+    }
+
+
+    assistantLines = [];
+
+  }
+
 
   for (const rawLine of lines) {
-    const line = rawLine.trim();
-    if (/^(Thoughts|Analyzing .+|Deconstructing .+)$/i.test(line)) continue;
 
-    if (isLikelyUserLine(line)) {
-      flushAssistant();
-      parts.push({ role: 'user', content: line });
+    const line = rawLine.trim();
+
+
+    // ChatGPT内部表示のような不要行を除外
+    if (
+      line === "Thoughts" ||
+      line.startsWith("Analyzing ") ||
+      line.startsWith("Deconstructing ")
+    ) {
       continue;
     }
-    current.push(rawLine);
-  }
-  flushAssistant();
-  return parts;
-}
 
-function safeMarkdown(md) {
-  if (window.marked && window.DOMPurify) {
-    marked.setOptions({ breaks: true, gfm: true });
-    return DOMPurify.sanitize(marked.parse(md));
-  }
-  const div = document.createElement('div');
-  div.textContent = md;
-  return div.innerHTML.replace(/\n/g, '<br>');
-}
 
-function renderMessages(query = '') {
-  const q = query.trim().toLowerCase();
-  let matches = 0;
-  chat.innerHTML = '';
+    // ユーザー発言
+    if (isUserMessage(line)) {
 
-  messageData.forEach((msg) => {
-    const row = document.createElement('section');
-    row.className = `message ${msg.role}`;
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
+      flushAssistant();
 
-    if (!q) {
-      bubble.innerHTML = msg.role === 'assistant'
-        ? safeMarkdown(msg.content)
-        : safeMarkdown(`**${msg.content}**`);
-    } else {
-      const plain = msg.content;
-      const lower = plain.toLowerCase();
-      const count = lower.split(q).length - 1;
-      matches += count;
+      messages.push({
+        role: "user",
+        content: line
+      });
 
-      if (count > 0) {
-        const escaped = plain.replace(/[&<>"']/g, s => ({
-          '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
-        }[s]));
-        const escapedQ = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        bubble.innerHTML = escaped
-          .replace(new RegExp(`(${escapedQ})`, 'gi'), '<mark>$1</mark>')
-          .replace(/\n/g, '<br>');
-      } else {
-        bubble.innerHTML = msg.role === 'assistant'
-          ? safeMarkdown(msg.content)
-          : safeMarkdown(`**${msg.content}**`);
-      }
+      continue;
     }
 
-    row.appendChild(bubble);
-    chat.appendChild(row);
-  });
 
-  searchCount.textContent = q ? `${matches}件見つかりました` : '';
+    assistantLines.push(rawLine);
+
+  }
+
+
+  flushAssistant();
+
+
+  return messages;
+
 }
 
-async function loadBook(card) {
-  const file = card.dataset.file;
-  const key = card.dataset.book;
 
-  readerTitle.textContent = card.dataset.title || '';
-  readerSubtitle.textContent = card.dataset.subtitle || '';
-  searchInput.value = '';
-  searchCount.textContent = '';
-  searchPanel.hidden = true;
-  progressBar.style.width = '0%';
-  chat.innerHTML = '<div class="loading">本を開いています…</div>';
+/* =========================
+   チャット表示
+========================= */
 
-  if (cache.has(key)) {
-    const cached = cache.get(key);
-    sourceText = cached.sourceText;
-    messageData = cached.messageData;
-    renderMessages();
-    return;
-  }
+function renderMessages(messages) {
+
+  chat.innerHTML = "";
+
+
+  messages.forEach((message) => {
+
+    const row = document.createElement("section");
+
+    row.className =
+      "message " + message.role;
+
+
+    const bubble =
+      document.createElement("div");
+
+    bubble.className = "bubble";
+
+
+    if (message.role === "user") {
+
+      bubble.innerHTML =
+        markdownToHtml(
+          "**" + message.content + "**"
+        );
+
+    } else {
+
+      bubble.innerHTML =
+        markdownToHtml(
+          message.content
+        );
+
+    }
+
+
+    row.appendChild(bubble);
+
+    chat.appendChild(row);
+
+  });
+
+}
+
+
+/* =========================
+   本を読み込む
+========================= */
+
+async function openBook(card) {
+
+  const file =
+    card.dataset.file;
+
+
+  const title =
+    card.dataset.title;
+
+
+  const subtitle =
+    card.dataset.subtitle;
+
+
+  readerTitle.textContent =
+    title || "";
+
+
+  readerSubtitle.textContent =
+    subtitle || "";
+
+
+  chat.innerHTML =
+    '<div class="loading">本を開いています…</div>';
+
+
+  showReader();
+
 
   try {
-    const res = await fetch(file);
-    if (!res.ok) throw new Error('load failed');
-    sourceText = await res.text();
-    messageData = parseConversation(sourceText);
-    cache.set(key, { sourceText, messageData });
-    renderMessages();
-  } catch (e) {
-    chat.innerHTML = '<div class="loading">本文を読み込めませんでした。GitHub Pages上で開いてください。</div>';
+
+    console.log(
+      "読み込みファイル:",
+      file
+    );
+
+
+    const response =
+      await fetch(
+        "./" + file + "?v=" + Date.now()
+      );
+
+
+    console.log(
+      "HTTP status:",
+      response.status
+    );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "HTTP error " +
+        response.status
+      );
+
+    }
+
+
+    const text =
+      await response.text();
+
+
+    console.log(
+      "本文文字数:",
+      text.length
+    );
+
+
+    currentMessages =
+      parseConversation(text);
+
+
+    renderMessages(
+      currentMessages
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "本文読み込みエラー:",
+      error
+    );
+
+
+    chat.innerHTML = `
+      <div class="loading">
+
+        <p>
+          本文を読み込めませんでした。
+        </p>
+
+        <p style="font-size:14px;margin-top:12px;">
+          読み込み対象：
+          <strong>${file}</strong>
+        </p>
+
+        <p style="font-size:13px;margin-top:8px;">
+          ${escapeHtml(error.message)}
+        </p>
+
+      </div>
+    `;
+
   }
+
 }
 
+
+/* =========================
+   本をクリック
+========================= */
+
 bookCards.forEach((card) => {
-  card.addEventListener('click', async () => {
-    showScreen('reader');
-    await loadBook(card);
-  });
+
+  card.addEventListener(
+    "click",
+    function () {
+
+      openBook(card);
+
+    }
+  );
+
 });
 
-backBtn.addEventListener('click', () => showScreen('library'));
-searchBtn.addEventListener('click', () => {
-  searchPanel.hidden = !searchPanel.hidden;
-  if (!searchPanel.hidden) searchInput.focus();
-});
-searchInput.addEventListener('input', () => renderMessages(searchInput.value));
-topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-window.addEventListener('scroll', () => {
-  if (!reader.classList.contains('active')) return;
-  const max = document.documentElement.scrollHeight - window.innerHeight;
-  const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
-  progressBar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
-  topBtn.classList.toggle('show', window.scrollY > 700);
-});
+/* =========================
+   戻る
+========================= */
+
+backBtn.addEventListener(
+  "click",
+  showLibrary
+);
+
+
+/* =========================
+   検索
+========================= */
+
+searchBtn.addEventListener(
+  "click",
+  function () {
+
+    searchPanel.hidden =
+      !searchPanel.hidden;
+
+
+    if (!searchPanel.hidden) {
+
+      searchInput.focus();
+
+    }
+
+  }
+);
+
+
+searchInput.addEventListener(
+  "input",
+  function () {
+
+    const keyword =
+      searchInput.value
+        .trim()
+        .toLowerCase();
+
+
+    if (!keyword) {
+
+      renderMessages(
+        currentMessages
+      );
+
+      searchCount.textContent =
+        "";
+
+      return;
+
+    }
+
+
+    let count = 0;
+
+
+    const filtered =
+      currentMessages.filter(
+        (message) => {
+
+          const hit =
+            message.content
+              .toLowerCase()
+              .includes(keyword);
+
+
+          if (hit) {
+            count++;
+          }
+
+
+          return hit;
+
+        }
+      );
+
+
+    renderMessages(filtered);
+
+
+    searchCount.textContent =
+      count +
+      "件見つかりました";
+
+  }
+);
+
+
+/* =========================
+   一番上へ戻る
+========================= */
+
+topBtn.addEventListener(
+  "click",
+  function () {
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  }
+);
+
+
+/* =========================
+   読書進捗
+========================= */
+
+window.addEventListener(
+  "scroll",
+  function () {
+
+    if (
+      !reader.classList.contains(
+        "active"
+      )
+    ) {
+      return;
+    }
+
+
+    const documentHeight =
+      document.documentElement
+        .scrollHeight -
+      window.innerHeight;
+
+
+    let progress = 0;
+
+
+    if (documentHeight > 0) {
+
+      progress =
+        (
+          window.scrollY /
+          documentHeight
+        ) * 100;
+
+    }
+
+
+    progressBar.style.width =
+      progress + "%";
+
+
+    if (window.scrollY > 700) {
+
+      topBtn.classList.add(
+        "show"
+      );
+
+    } else {
+
+      topBtn.classList.remove(
+        "show"
+      );
+
+    }
+
+  }
+);
