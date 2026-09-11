@@ -2,328 +2,156 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
-  />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6f1e7" />
-
   <title>My Books</title>
-
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-
-  <!-- =========================
-       本棚画面
-  ========================== -->
-  <main
-    id="library"
-    class="screen active"
-    aria-label="本棚"
-  >
-
+  <main id="library" class="screen active" aria-label="本棚">
     <header class="library-header">
-
       <div>
-
-        <p class="eyebrow">
-          MY LIBRARY
-        </p>
-
-        <h1>
-          本棚
-        </h1>
-
-        <p class="sub">
-          学んだチャットを、本として読み返す。
-        </p>
-
+        <p class="eyebrow">MY LIBRARY</p>
+        <h1>本棚</h1>
+        <p class="sub">学んだチャットを、本として読み返す。</p>
       </div>
-
     </header>
 
-
-    <!-- =========================
-         本一覧
-    ========================== -->
-    <section
-      class="shelf"
-      aria-label="本の一覧"
-    >
-
-
-      <!-- =========================
-           1冊目
-      ========================== -->
-      <button
-        class="book-card"
-        type="button"
-
+    <section class="shelf" aria-label="本の一覧">
+      <button class="book-card" type="button"
         data-book="mindfulness"
-
         data-title="不安をなくす究極のマインドフルネス"
-
         data-subtitle="4分割理解・記憶シート"
-
         data-file="mindfulness.md"
-
-        aria-label="不安をなくす究極のマインドフルネスを開く"
-      >
-
+        aria-label="不安をなくす究極のマインドフルネスを開く">
         <div class="book-cover cover-green">
-
-          <span class="book-kicker">
-            4分割理解・記憶シート
-          </span>
-
-          <strong>
-            不安をなくす
-            <br>
-            究極の
-            <br>
-            マインドフルネス
-          </strong>
-
-          <span class="book-meta">
-            第1章〜第5章
-          </span>
-
+          <span class="book-kicker">4分割理解・記憶シート</span>
+          <strong>不安をなくす<br>究極の<br>マインドフルネス</strong>
+          <span class="book-meta">第1章〜第5章</span>
         </div>
-
-
         <div class="book-info">
-
-          <h2>
-            不安をなくす究極のマインドフルネス
-          </h2>
-
-          <p>
-            タップしてチャット内容を読む
-          </p>
-
+          <h2>不安をなくす究極のマインドフルネス</h2>
+          <p>タップしてチャット内容を読む</p>
         </div>
-
       </button>
 
-
-
-      <!-- =========================
-           2冊目
-      ========================== -->
-      <button
-        class="book-card"
-        type="button"
-
+      <button class="book-card" type="button"
         data-book="structuralism"
-
         data-title="寝ながら学べる構造主義"
-
         data-subtitle="4分割理解・記憶シート"
-
         data-file="structuralism.md"
-
-        aria-label="寝ながら学べる構造主義を開く"
-      >
-
+        aria-label="寝ながら学べる構造主義を開く">
         <div class="book-cover cover-navy">
-
-          <span class="book-kicker">
-            内田樹・4分割理解
-          </span>
-
-          <strong>
-            寝ながら
-            <br>
-            学べる
-            <br>
-            構造主義
-          </strong>
-
-          <span class="book-meta">
-            全章・全セクション
-          </span>
-
+          <span class="book-kicker">内田樹・4分割理解</span>
+          <strong>寝ながら<br>学べる<br>構造主義</strong>
+          <span class="book-meta">全章・全セクション</span>
         </div>
-
-
         <div class="book-info">
-
-          <h2>
-            寝ながら学べる構造主義
-          </h2>
-
-          <p>
-            タップしてチャット内容を読む
-          </p>
-
+          <h2>寝ながら学べる構造主義</h2>
+          <p>タップしてチャット内容を読む</p>
         </div>
-
       </button>
 
+      <button class="book-card" type="button"
+        data-book="silicon-valley-lifehack"
+        data-title="シリコンバレー式超ライフハック"
+        data-subtitle="HACK別・4分割理解シート"
+        data-file="silicon_valley_lifehack.md"
+        aria-label="シリコンバレー式超ライフハックを開く">
+        <div class="book-cover cover-orange">
+          <span class="book-kicker">HACK別・4分割理解</span>
+          <strong>シリコンバレー式<br>超<br>ライフハック</strong>
+          <span class="book-meta">HACK01〜</span>
+        </div>
+        <div class="book-info">
+          <h2>シリコンバレー式超ライフハック</h2>
+          <p>タップしてチャット内容を読む</p>
+        </div>
+      </button>
+
+
+      <button class="book-card" type="button"
+        data-book="accounting-internal-control"
+        data-title="経理実務と内部統制"
+        data-subtitle="業務フロー・4分割理解シート"
+        data-file="accounting_internal_control.md"
+        aria-label="経理実務と内部統制を開く">
+        <div class="book-cover cover-brown">
+          <span class="book-kicker">業務フロー・4分割理解</span>
+          <strong>経理実務と<br>内部統制</strong>
+          <span class="book-meta">現金預金・小切手・売上債権ほか</span>
+        </div>
+        <div class="book-info">
+          <h2>経理実務と内部統制</h2>
+          <p>タップしてチャット内容を読む</p>
+        </div>
+      </button>
+
+
+      <button class="book-card" type="button"
+        data-book="financial-statements-analysis"
+        data-title="財務諸表の読み方・図解分析"
+        data-subtitle="財務3表・4分割理解シート"
+        data-file="financial_statements_analysis.md"
+        aria-label="財務諸表の読み方・図解分析を開く">
+        <div class="book-cover cover-blue">
+          <span class="book-kicker">財務3表・4分割理解</span>
+          <strong>財務諸表の<br>読み方・<br>図解分析</strong>
+          <span class="book-meta">ROE・CS・比較分析ほか</span>
+        </div>
+        <div class="book-info">
+          <h2>財務諸表の読み方・図解分析</h2>
+          <p>タップしてチャット内容を読む</p>
+        </div>
+      </button>
+
+
+      <button class="book-card" type="button"
+        data-book="seneca-schopenhauer"
+        data-title="人生の短さ・思索・読書"
+        data-subtitle="セネカ＆ショウペンハウエル・4分割理解シート"
+        data-file="seneca_schopenhauer.md"
+        aria-label="人生の短さ・思索・読書を開く">
+        <div class="book-cover cover-purple">
+          <span class="book-kicker">哲学・4分割理解</span>
+          <strong>人生の短さ・<br>思索・<br>読書</strong>
+          <span class="book-meta">セネカ／ショウペンハウエル</span>
+        </div>
+        <div class="book-info">
+          <h2>人生の短さ・思索・読書</h2>
+          <p>タップしてチャット内容を読む</p>
+        </div>
+      </button>
 
     </section>
-
   </main>
 
-
-
-  <!-- =========================
-       本文を読む画面
-  ========================== -->
-  <main
-    id="reader"
-    class="screen"
-    aria-label="読書画面"
-  >
-
-
-    <!-- 上部バー -->
+  <main id="reader" class="screen" aria-label="読書画面">
     <header class="reader-header">
-
-
-      <!-- 本棚へ戻る -->
-      <button
-        id="backBtn"
-        class="icon-btn"
-        type="button"
-        aria-label="本棚に戻る"
-      >
-        ←
-      </button>
-
-
-
-      <!-- 本タイトル -->
+      <button id="backBtn" class="icon-btn" type="button" aria-label="本棚に戻る">←</button>
       <div class="reader-title-wrap">
-
-        <p
-          id="readerTitle"
-          class="reader-title"
-        >
-        </p>
-
-        <p
-          id="readerSubtitle"
-          class="reader-subtitle"
-        >
-        </p>
-
+        <p id="readerTitle" class="reader-title"></p>
+        <p id="readerSubtitle" class="reader-subtitle"></p>
       </div>
-
-
-
-      <!-- 検索ボタン -->
-      <button
-        id="searchBtn"
-        class="icon-btn"
-        type="button"
-        aria-label="本文を検索"
-      >
-        ⌕
-      </button>
-
-
+      <button id="searchBtn" class="icon-btn" type="button" aria-label="本文を検索">⌕</button>
     </header>
 
+    <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
 
-
-    <!-- =========================
-         読書進捗バー
-    ========================== -->
-    <div class="progress-track">
-
-      <div
-        id="progressBar"
-        class="progress-bar"
-      >
-      </div>
-
-    </div>
-
-
-
-    <!-- =========================
-         検索欄
-    ========================== -->
-    <section
-      id="searchPanel"
-      class="search-panel"
-      hidden
-    >
-
-      <input
-        id="searchInput"
-        type="search"
-        placeholder="本の中を検索"
-        autocomplete="off"
-      />
-
-      <span id="searchCount">
-      </span>
-
+    <section id="searchPanel" class="search-panel" hidden>
+      <input id="searchInput" type="search" placeholder="本の中を検索" autocomplete="off" />
+      <span id="searchCount"></span>
     </section>
 
-
-
-    <!-- =========================
-         チャット本文
-    ========================== -->
-    <article
-      id="chat"
-      class="chat"
-      aria-live="polite"
-    >
-
-      <div class="loading">
-        本を開いています…
-      </div>
-
+    <article id="chat" class="chat" aria-live="polite">
+      <div class="loading">本を開いています…</div>
     </article>
 
-
-
-    <!-- =========================
-         一番上へ戻るボタン
-    ========================== -->
-    <button
-      id="topBtn"
-      class="top-btn"
-      type="button"
-      aria-label="一番上へ戻る"
-    >
-      ↑
-    </button>
-
-
+    <button id="topBtn" class="top-btn" type="button" aria-label="一番上へ戻る">↑</button>
   </main>
 
-
-
-  <!-- =========================
-       Markdown表示用
-  ========================== -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"
-  ></script>
-
-
-  <!-- =========================
-       HTML安全化
-  ========================== -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"
-  ></script>
-
-
-  <!-- =========================
-       アプリ本体
-  ========================== -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
   <script src="app.js"></script>
-
-
 </body>
-
 </html>

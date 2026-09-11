@@ -139,3 +139,19 @@ mark { background:#ffe78d; padding:0 .08em; border-radius:2px; }
 @media (max-width: 620px) {
   .shelf { gap: 34px; }
 }
+
+.cover-orange {
+  background: linear-gradient(145deg, #7a3f18, #b96a2a 64%, #4d2812);
+}
+
+.cover-brown {
+  background: linear-gradient(145deg, #4f3427, #7a5642 64%, #2f211a);
+}
+
+.cover-blue {
+  background: linear-gradient(145deg, #23465f, #3f7394 64%, #173246);
+}
+
+.cover-purple {
+  background: linear-gradient(145deg, #4a315f, #73558d 64%, #2d1f3a);
+}

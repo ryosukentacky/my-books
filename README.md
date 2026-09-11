@@ -1,13 +1,16 @@
 # My Books
 
-ChatGPTで学んだ内容を「1冊の本」として本棚から開き、チャット形式で読み返すためのGitHub Pages用アプリです。
+GitHub Pages用の本棚アプリです。
 
-## 入っている本
+## 収録本
 1. 不安をなくす究極のマインドフルネス
 2. 寝ながら学べる構造主義
+3. シリコンバレー式超ライフハック
+4. 経理実務と内部統制
+5. 財務諸表の読み方・図解分析
+6. 人生の短さ・思索・読書
 
-## GitHub Pagesで公開
-1. このフォルダの中身をGitHubリポジトリへアップロード
-2. Settings → Pages
-3. Branch を `main`、Folder を `/(root)` にして保存
-4. 発行されたURLを開く
+GitHubには、このフォルダの中身をリポジトリ直下へアップロードしてください。
+
+GitHub Pages:
+Settings → Pages → Deploy from a branch → main → /(root)
