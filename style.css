@@ -155,3 +155,11 @@ mark { background:#ffe78d; padding:0 .08em; border-radius:2px; }
 .cover-purple {
   background: linear-gradient(145deg, #4a315f, #73558d 64%, #2d1f3a);
 }
+
+.cover-teal {
+  background: linear-gradient(145deg, #1f4d4d, #3f7b7b 64%, #153232);
+}
+
+.cover-gold {
+  background: linear-gradient(145deg, #6f551c, #a9852d 64%, #443411);
+}
