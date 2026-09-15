@@ -11,8 +11,7 @@ GitHub Pages用の本棚アプリです。
 6. 人生の短さ・思索・読書
 7. スマホ時代の哲学
 8. 財務3表一体理解法
-
-GitHubには、このフォルダの中身をリポジトリ直下へアップロードしてください。
-
-GitHub Pages:
-Settings → Pages → Deploy from a branch → main → /(root)
+9. 道具としてのファイナンス
+10. MOS Excel 365 学習ノート
+11. LISTEN――知性豊かで創造力がある人になれる
+12. 現代の金融入門【新版】
