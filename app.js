@@ -166,11 +166,6 @@ function renderMessages(query="") {
 
     stack.appendChild(bubble);
 
-    if (msg.role === "assistant" && !q) {
-      const quiz = makeQuiz(quizFromMessage(msg.content));
-      if (quiz) stack.appendChild(quiz);
-    }
-
     row.appendChild(stack);
     chat.appendChild(row);
   });
